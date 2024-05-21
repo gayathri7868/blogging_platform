@@ -2,7 +2,6 @@ const express = require('express')
 const routes = express.Router()
 const commentRoutes = require('./comment.route')
 const authroutes = require('../middleware/auth')
-const postModel = require('../models/post.model')
 const methods = require('../controllers/posts.controller')
 
 routes.use(express.json())

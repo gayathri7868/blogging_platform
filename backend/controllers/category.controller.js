@@ -18,6 +18,18 @@ async function getAllCategories(req, res) {
 
 
 }
+
+async function getPostsByCategory(req, res) {
+    try {
+        const name = req.params.name
+        const categories = await categoryModel.find({ name: name })
+        if (categories) { return res.status(200).send(categories) }
+        res.status(404).send("category does not exist")
+    }
+    catch (err) {
+        res.send("error")
+    }
+}
 async function createCategory(req, res) {
     try {
         const category = await categoryModel.create({
@@ -34,5 +46,5 @@ async function createCategory(req, res) {
     }
 }
 
-categoryMethods = { createCategory, getAllCategories }
+const categoryMethods = { createCategory, getAllCategories, getPostsByCategory }
 module.exports = categoryMethods

@@ -13,7 +13,7 @@ async function login(req, res) {
         if (!validPassword) { return res.status(404).send("invalid credentials") }
 
         const id = user._id
-        const token = jwt.sign({ id }, process.env.SECRET_KEY)
+        const token = await jwt.sign({ id }, process.env.SECRET_KEY)
         if (token) return res.send(token)
         else res.send("token cannot be created")
 
@@ -27,7 +27,6 @@ async function login(req, res) {
 
 async function signup(req, res) {
     try {
-        console.log("#$")
         const { username } = req.body.username
         if (!userModel.findOne({ username })) {
             return res.send("Username already exists")
@@ -53,8 +52,6 @@ async function signup(req, res) {
                             const id = savedUser._id
                             jwt.sign({ id }, process.env.SECRET_KEY, (err, token) => {
                                 res.status(200).send(token)
-                                console.log(token)
-                                console.log('@#')
                             })
                         }
                         )

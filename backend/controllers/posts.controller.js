@@ -1,4 +1,5 @@
 const postModel = require('../models/post.model')
+const categoryModel = require('../models/category.model')
 
 async function updatePost(req, res) {
     try {
@@ -36,16 +37,30 @@ async function getPostById(req, res) {
 async function createPost(req, res) {
     try {
 
-        const post = await postModel.create({
+        const posts = await postModel.create({
             userId: req.id,
             title: req.body.title,
             content: req.body.content,
-            catgeory: req.body.catgeory,
+            createdAt: req.body.createdAt,
+            category: req.body.category
+
 
         })
-        console.log("**", req.body)
-        console.log(post)
-        res.send(post)
+        categ = posts.category
+        console.log(categ)
+        const categories = await categoryModel.findOne({ name: categ })
+        console.log(categories)
+        if (categories) {
+            categories.post.push(posts)
+            console.log("&&", categories)
+            categories.save()
+        }
+        else {
+            const newCategories = await categoryModel.create({ categ })
+            newCategories.post.push(posts)
+            newCategories.save()
+        }
+        res.send(posts)
     }
     catch (err) { console.log(err) }
 
