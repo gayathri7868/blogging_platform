@@ -22,5 +22,7 @@ app.use('/api/users', userProfileRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/auth', userauthRoutes)
 app.use('/api/posts', postRoutes)
-app.use('/api/posts/comments', commentRoutes)
+// app.use('/api/posts/comments', commentRoutes)
+
+
 app.listen(port, () => console.log(`Server is running on port ${port}`))

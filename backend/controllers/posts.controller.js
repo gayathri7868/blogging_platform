@@ -47,12 +47,9 @@ async function createPost(req, res) {
 
         })
         categ = posts.category
-        console.log(categ)
         const categories = await categoryModel.findOne({ name: categ })
-        console.log(categories)
         if (categories) {
             categories.post.push(posts)
-            console.log("&&", categories)
             categories.save()
         }
         else {

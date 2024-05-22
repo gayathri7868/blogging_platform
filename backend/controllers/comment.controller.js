@@ -16,13 +16,13 @@ async function deleteComment(req, res) {
     try {
         const { id } = req.params.id;
         const { postId } = req.params.postId;
-        const comment = await CommentModel.findByIdAndDelete(id);
+        const comment = await commentModel.findByIdAndDelete(id);
         if (!comment)
             res.status(404).json(`Comment with id:${id} does not exists`);
         else {
             res.status(200).json(`Comment with id:${id} is deleted`);
-            const post = postModel.findById(postId)
-            post.comments.pull(comment)
+            // const post = postModel.findById(postId)
+            // post.comments.pull(comment)
 
             const posts = await postModel.findById(postId)
             posts.comments.splice(posts.comments.indexOf(comment), 1);
@@ -38,8 +38,7 @@ async function deleteComment(req, res) {
 async function addComment(req, res) {
     try {
         const { postId } = req.params
-        console.log("//", postId)
-        const comment = await CommentModel.create({
+        const comment = await commentModel.create({
             postId: postId,
             userId: req.id,
             content: req.body.content,
