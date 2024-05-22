@@ -13,15 +13,18 @@ async function getCommentsForPost(req, res) {
 
 async function deleteComment(req, res) {
     try {
-        const { id } = req.params.id;
-        const { postId } = req.params.postId;
+        const id = req.params.id;
+        const postId = req.params.postId;
+        console.log(postId, id)
         const comment = await CommentModel.findByIdAndDelete(id);
         if (!comment)
             res.status(404).json(`Comment with id:${id} does not exists`);
         else {
-            res.status(200).json(`Comment with id:${id} is deleted`);
+
             const post = postModel.findById(postId)
-            post.comments.pull(comment)
+            console.log(post)
+            post.comments.pull(id)
+            res.status(200).json(`Comment with id:${id} is deleted`);
 
         }
     }
@@ -33,23 +36,18 @@ async function deleteComment(req, res) {
 async function addComment(req, res) {
     try {
         const { postId } = req.params
-        console.log("//", postId)
         const comment = await CommentModel.create({
             postId: postId,
             userId: req.id,
             content: req.body.content,
             createdAt: req.body.createdAt
-
         })
-        console.log(comment)
-
         if (comment) {
             res.send(comment)
             const posts = await postModel.findById(postId)
             posts.comments.push(comment)
             await posts.save()
                 .then((response) => { console.log(posts) })
-
         }
         else {
             res.send("error")
