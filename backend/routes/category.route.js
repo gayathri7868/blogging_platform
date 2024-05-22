@@ -6,6 +6,7 @@ routes.use(express.json())
 routes.use(express.urlencoded({ extended: true }))
 
 routes.get('/', categoryMethods.getAllCategories)
+routes.get('/:name', categoryMethods.getPostsByCategory)
 routes.post('/', categoryMethods.createCategory)
 
 module.exports = routes

@@ -1,9 +1,10 @@
-const CommentModel = require('../models/comment.model')
+const commentModel = require('../models/comment.model')
 const postModel = require('../models/post.model')
 
 async function getCommentsForPost(req, res) {
     try {
-        const comments = await CommentModel.find();
+        const postId = req.params.postId
+        const comments = await commentModel.find({ postId: postId });
         res.status(200).json(comments);
     }
     catch (error) {
@@ -13,29 +14,31 @@ async function getCommentsForPost(req, res) {
 
 async function deleteComment(req, res) {
     try {
-        const id = req.params.id;
-        const postId = req.params.postId;
-        console.log(postId, id)
+        const { id } = req.params.id;
+        const { postId } = req.params.postId;
         const comment = await CommentModel.findByIdAndDelete(id);
         if (!comment)
             res.status(404).json(`Comment with id:${id} does not exists`);
         else {
-
-            const post = postModel.findById(postId)
-            console.log(post)
-            post.comments.pull(id)
             res.status(200).json(`Comment with id:${id} is deleted`);
+            const post = postModel.findById(postId)
+            post.comments.pull(comment)
 
+            const posts = await postModel.findById(postId)
+            posts.comments.splice(posts.comments.indexOf(comment), 1);
+            posts.save();
+            res.status(200).send(`Comment with id:${id} is deleted`);
         }
     }
     catch (error) {
-        res.status(500).json(error.message);
+        res.status(500).json({ message: error });
     }
 }
 
 async function addComment(req, res) {
     try {
         const { postId } = req.params
+        console.log("//", postId)
         const comment = await CommentModel.create({
             postId: postId,
             userId: req.id,
